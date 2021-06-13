@@ -48,7 +48,7 @@ export const playerResolver = {
         },
       })
       .exec()
-      .then(player => {
+      .then((player) => {
         const sortResults = player.results.sort((a, b) => (a.game.date < b.game.date ? 1 : -1));
         player.results = sortResults;
         return player;
@@ -71,7 +71,10 @@ export const playerResolver = {
     const existPlayerHandle = await Player.findOne({ handle });
     if (_id) {
       const updatedPlayer = await Player.findByIdAndUpdate(_id, {
-        name, handle, isRegular, isShowInRating,
+        name,
+        handle,
+        isRegular,
+        isShowInRating,
       });
       await updatedPlayer.save();
       const result = await Player.findById(_id);
@@ -87,6 +90,4 @@ export const playerResolver = {
 
     return newPlayer;
   },
-
-
 };

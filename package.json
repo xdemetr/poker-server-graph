@@ -5,7 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "prettier-fix": "npx prettier --write ./src/**/*.js",
+    "prettier-check": "npx prettier --check ./src/**/*.js"
   },
   "author": "",
   "license": "ISC",
@@ -22,6 +24,7 @@
     "mongoose": "^5.12.13"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.7",
+    "prettier": "^2.3.1"
   }
 }

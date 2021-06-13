@@ -105,4 +105,3 @@ const graphQlSchema = buildSchema(`
 `);
 
 export default graphQlSchema;
-

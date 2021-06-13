@@ -14,7 +14,7 @@ export const authResolver = {
    * @param args
    * @returns {Promise<{[p: string]: *}>}
    */
-  createUser: async args => {
+  createUser: async (args) => {
     try {
       const existingUser = await User.findOne({ email: args.userInput.email });
       if (existingUser) {
@@ -50,13 +50,9 @@ export const authResolver = {
     if (!isEqual) {
       throw new Error('Password is incorrect!');
     }
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '1h',
-      },
-    );
+    const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
     return {
       userId: user.id,
       isAdmin: user.isAdmin,

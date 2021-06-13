@@ -7,7 +7,7 @@ const gameSchema = new Schema({
     type: String,
   },
   date: {
-    type: Date,
+    type: String,
     default: Date.now,
   },
   players: [
@@ -15,8 +15,7 @@ const gameSchema = new Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Player',
     },
-  ]
-  ,
+  ],
   buyIn: {
     type: Number,
     default: 500,
