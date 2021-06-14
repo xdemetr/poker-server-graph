@@ -56,7 +56,7 @@ export const authResolver = {
     return {
       userId: user.id,
       isAdmin: user.isAdmin,
-      token: token,
+      token: `Bearer ${token}`,
       tokenExpiration: 3600,
     };
   },
