@@ -9,8 +9,11 @@ export const playerResolver = {
    * @param req
    * @returns {Promise<*>}
    */
-  getAllPlayers: async (args, req) => {
-    const res = await Player.find().sort({ isRegular: -1, name: 1 });
+  getAllPlayers: async (args) => {
+    let sort;
+    const sortByF = args?.sortBy ? { [args.sortBy]: -1 } : null;
+    sort = { ...sortByF, isRegular: -1, name: 1 };
+    const res = await Player.find().sort(sort);
     return res;
   },
 

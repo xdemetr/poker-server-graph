@@ -76,7 +76,7 @@ const graphQlSchema = buildSchema(`
 
     type RootQuery {
         # PLAYERS 
-        getAllPlayers: [Player!]!
+        getAllPlayers(sortBy: String): [Player]
         getPlayer(_id: ID!): Player!
         getPlayerByHandle(handle: String): Player
 
