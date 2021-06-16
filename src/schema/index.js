@@ -73,6 +73,19 @@ const graphQlSchema = buildSchema(`
         players: [ID!]
         results: [Int]
     }
+    
+    type PageItem {
+        number: Int
+        url: String
+    }
+
+    type PagedGames {
+        pageCount: Int,
+        itemCount: Int,
+        data: [Game],
+        has_more: Boolean
+        pages: [PageItem]
+    }
 
     type RootQuery {
         # PLAYERS 
@@ -81,8 +94,8 @@ const graphQlSchema = buildSchema(`
         getPlayerByHandle(handle: String): Player
 
         # GAMES
-        getAllGames: [Game]
-        getGame(_id: ID!): Game
+        getAllGames(limit: Int, page: Int): PagedGames
+        getGame(name: String!): Game
         getGameCount: Int
 
         # AUTH        

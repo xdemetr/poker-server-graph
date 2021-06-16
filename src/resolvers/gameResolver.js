@@ -2,29 +2,44 @@ import moment from 'moment';
 import { checkIsAuth } from './authResolver.js';
 import Game from '../models/gameModel.js';
 import Player from '../models/playerModel.js';
+import paginate from 'express-paginate';
 
 Array.prototype.max = function () {
   return Math.max.apply(null, this);
 };
 
 export const gameResolver = {
-  getAllGames: async () => {
-    const res = await Game.find()
-      .sort({ date: -1 })
-      .populate({
-        path: 'players',
-        model: 'Player',
-      })
-      .exec();
-    return res;
+  getAllGames: async ({ limit = 10, page = 1 }, req) => {
+    const skip = page * limit - limit;
+    const modifyReq = {
+      ...req,
+      limit,
+      page,
+    };
+
+    const [results, itemCount] = await Promise.all([
+      Game.find({}).sort({ date: -1 }).limit(limit).skip(skip).lean().exec(),
+      Game.count({}),
+    ]);
+
+    const pageCount = Math.ceil(itemCount / limit);
+    paginate.getArrayPages(modifyReq)(5, pageCount, page);
+
+    return {
+      pageCount,
+      itemCount,
+      data: results,
+      has_more: page < pageCount,
+      pages: paginate.getArrayPages(modifyReq)(5, pageCount, page),
+    };
   },
 
-  getGame: async ({ _id: gameId }) => {
-    if (!gameId) {
+  getGame: async ({ name }) => {
+    if (!name) {
       throw new Error('Не указан id игры');
     }
 
-    const game = await Game.findById(gameId)
+    const game = await Game.findOne({ name })
       .populate({
         path: 'players',
         model: 'Player',
