@@ -78,6 +78,17 @@ const graphQlSchema = buildSchema(`
         number: Int
         url: String
     }
+    
+    type PlayerHistory {
+        value: Int
+        date: String
+        name: String
+    }
+    
+    type History {
+        date: String
+        game: [Game]
+    }
 
     type PagedGames {
         pageCount: Int,
@@ -92,6 +103,8 @@ const graphQlSchema = buildSchema(`
         getAllPlayers(sortBy: String): [Player]
         getPlayer(_id: ID!): Player!
         getPlayerByHandle(handle: String): Player
+        getPlayerHistory(handle: String!): [PlayerHistory]
+        getHistory: [History]
 
         # GAMES
         getAllGames(limit: Int, page: Int): PagedGames

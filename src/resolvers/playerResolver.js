@@ -59,6 +59,38 @@ export const playerResolver = {
 
     return player;
   },
+  getPlayerHistory: async ({ handle = '' }) => {
+    const player = await Player.findOne({ handle })
+      .populate({
+        path: 'results.game',
+        model: 'Game',
+        select: ['name', 'date'],
+        populate: {
+          path: 'players',
+          model: 'Player',
+        },
+      })
+      .exec()
+      .then((player) => {
+        const sortResults = player.results.sort((a, b) => (a.game.date > b.game.date ? 1 : -1));
+        player.results = sortResults;
+
+        let resultsArray = [];
+
+        sortResults.reduce((acc, currentValue, index) => {
+          resultsArray.push({
+            value: acc + currentValue.result,
+            date: new Date(sortResults[index].game.date).toDateString(),
+            name: player.name,
+          });
+
+          return acc + currentValue.result;
+        }, 0);
+
+        return resultsArray;
+      });
+    return player;
+  },
 
   /**
    * Создание и обновление игрока
