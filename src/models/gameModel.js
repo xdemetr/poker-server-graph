@@ -7,7 +7,7 @@ const gameSchema = new Schema({
     type: String,
   },
   date: {
-    type: String,
+    type: Date,
     default: Date.now,
   },
   players: [
