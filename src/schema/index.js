@@ -51,7 +51,7 @@ const graphQlSchema = buildSchema(`
     }
 
     input PlayerInput {
-        _id: ID
+        id: ID
         name: String!
         handle: String!
         isRegular: Boolean

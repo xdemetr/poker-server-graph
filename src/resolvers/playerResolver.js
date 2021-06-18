@@ -101,28 +101,33 @@ export const playerResolver = {
   createPlayer: async ({ playerInput }, req) => {
     checkIsAuth(req.isAuth);
 
-    const { _id, name, handle, isRegular, isShowInRating } = playerInput;
-
+    const { id, name, handle, isRegular, isShowInRating } = playerInput;
     const existPlayerHandle = await Player.findOne({ handle });
-    if (_id) {
-      const updatedPlayer = await Player.findByIdAndUpdate(_id, {
+
+    if (!id) {
+      if (existPlayerHandle) {
+        throw new Error('Handle already exist');
+      }
+      const newPlayer = new Player({ name, handle, isRegular, isShowInRating });
+      await newPlayer.save();
+
+      return newPlayer;
+    }
+
+    if (id) {
+      if (existPlayerHandle && existPlayerHandle.handle === handle && existPlayerHandle.id != id) {
+        throw new Error('Handle already exist');
+      }
+
+      await Player.findByIdAndUpdate(id, {
         name,
         handle,
         isRegular,
         isShowInRating,
       });
-      await updatedPlayer.save();
-      const result = await Player.findById(_id);
+
+      const result = await Player.findById(id);
       return result;
     }
-
-    if (existPlayerHandle) {
-      throw new Error('Handle already exist');
-    }
-
-    const newPlayer = new Player({ name, handle, isRegular, isShowInRating });
-    await newPlayer.save();
-
-    return newPlayer;
   },
 };
