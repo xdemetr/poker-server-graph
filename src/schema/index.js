@@ -67,11 +67,13 @@ const graphQlSchema = buildSchema(`
     }
 
     input ResultInput {
-        gameId: String!
+        id: String!
         name: String
         date: String
         players: [ID!]
         results: [Int]
+        isBigGame: Boolean
+        buyIn: Int
     }
     
     type PageItem {
@@ -121,7 +123,7 @@ const graphQlSchema = buildSchema(`
 
         createGame(gameInput: GameInput): Game
         saveGameResult(resultInput: ResultInput): Game
-        deleteGame(_id: ID): Game
+        deleteGame(id: ID): Game
     }
 
     schema {

@@ -81,10 +81,10 @@ export const gameResolver = {
     return newGame;
   },
 
-  saveGameResult: async ({ resultInput: { gameId, players, results, name, date } }, req) => {
+  saveGameResult: async ({ resultInput: { id, players, results, name, date } }, req) => {
     checkIsAuth(req.isAuth);
 
-    if (!gameId) {
+    if (!id) {
       throw new Error('Не указан id игры');
     }
 
@@ -97,7 +97,7 @@ export const gameResolver = {
       date: gameDate,
     };
 
-    await Game.findByIdAndUpdate(gameId, updatedGame).then((game) => {
+    await Game.findByIdAndUpdate(id, updatedGame).then((game) => {
       game.save().then((game) => {
         // Обновление игр в каждом игроке
         const res = players.map((player, index) => {
@@ -163,7 +163,7 @@ export const gameResolver = {
       });
     });
 
-    const res = await Game.findById(gameId)
+    const res = await Game.findById(id)
       .populate({
         path: 'players',
         model: 'Player',
@@ -180,7 +180,7 @@ export const gameResolver = {
     return res;
   },
 
-  deleteGame: async ({ _id: gameId }, req) => {
+  deleteGame: async ({ id: gameId }, req) => {
     checkIsAuth(req.isAuth);
 
     return await Game.findByIdAndRemove(gameId).then((game) => {
