@@ -18,7 +18,16 @@ export const gameResolver = {
     };
 
     const [results, itemCount] = await Promise.all([
-      Game.find({}).sort({ date: -1 }).limit(limit).skip(skip).lean().exec(),
+      Game.find({})
+        .sort({ date: -1 })
+        .populate({
+          path: 'players',
+          model: 'Player',
+        })
+        .limit(limit)
+        .skip(skip)
+        .lean()
+        .exec(),
       Game.count({}),
     ]);
 

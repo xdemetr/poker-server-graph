@@ -41,14 +41,14 @@ export const authResolver = {
    * @param password
    * @returns {Promise<{tokenExpiration: number, isAdmin: ({type: Boolean | BooleanConstructor}|*), userId, token: (*)}>}
    */
-  login: async ({ email, password }) => {
+  login: async ({ email, password }, req) => {
     const user = await User.findOne({ email: email });
     if (!user) {
-      throw new Error('User does not exist!');
+      throw new Error('Нет такого пользователя');
     }
     const isEqual = await bcrypt.compare(password, user.password);
     if (!isEqual) {
-      throw new Error('Password is incorrect!');
+      throw new Error('Неверный пароль');
     }
     const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, {
       expiresIn: '1h',

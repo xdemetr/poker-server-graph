@@ -13,7 +13,16 @@ export const playerResolver = {
     let sort;
     const sortByF = args?.sortBy ? { [args.sortBy]: -1 } : null;
     sort = { ...sortByF, isRegular: -1, name: 1 };
-    const res = await Player.find().sort(sort);
+    const res = await Player.find()
+      .sort(sort)
+      .populate({
+        path: 'results.game',
+        populate: {
+          path: 'players',
+          model: 'Player',
+        },
+      })
+      .exec();
     return res;
   },
 
@@ -106,7 +115,7 @@ export const playerResolver = {
 
     if (!id) {
       if (existPlayerHandle) {
-        throw new Error('Handle already exist');
+        throw new Error('Игрок с таким ником уже есть.');
       }
       const newPlayer = new Player({ name, handle, isRegular, isShowInRating });
       await newPlayer.save();
@@ -116,7 +125,7 @@ export const playerResolver = {
 
     if (id) {
       if (existPlayerHandle && existPlayerHandle.handle === handle && existPlayerHandle.id != id) {
-        throw new Error('Handle already exist');
+        throw new Error('Игрок с таким ником уже есть.');
       }
 
       await Player.findByIdAndUpdate(id, {

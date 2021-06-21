@@ -75,18 +75,18 @@ const graphQlSchema = buildSchema(`
         isBigGame: Boolean
         buyIn: Int
     }
-    
+
     type PageItem {
         number: Int
         url: String
     }
-    
+
     type PlayerHistory {
         value: Int
         date: String
         name: String
     }
-    
+
     type History {
         date: String
         game: [Game]
@@ -114,12 +114,12 @@ const graphQlSchema = buildSchema(`
         getGameCount: Int
 
         # AUTH        
-        login(email: String!, password: String!): AuthData!
+        login(email: String!, password: String!): AuthData
     }
 
     type RootMutation {
         createUser(userInput: UserInput): User
-        createPlayer(playerInput: PlayerInput): Player!
+        createPlayer(playerInput: PlayerInput): Player
 
         createGame(gameInput: GameInput): Game
         saveGameResult(resultInput: ResultInput): Game
