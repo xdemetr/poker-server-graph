@@ -2,6 +2,38 @@ import Player from '../models/playerModel.js';
 import Game from '../models/gameModel.js';
 import { checkIsAuth } from './authResolver.js';
 
+const playerHistory = async (handle) => {
+  return await Player.findOne({ handle })
+    .populate({
+      path: 'results.game',
+      model: 'Game',
+      select: ['name', 'date'],
+      populate: {
+        path: 'players',
+        model: 'Player',
+      },
+    })
+    .exec()
+    .then((player) => {
+      const sortResults = player.results.sort((a, b) => (a.game.date > b.game.date ? 1 : -1));
+      player.results = sortResults;
+
+      let resultsArray = [];
+
+      sortResults.reduce((acc, currentValue, index) => {
+        resultsArray.push({
+          value: acc + currentValue.result,
+          date: new Date(sortResults[index].game.date).toDateString(),
+          name: player.name,
+        });
+
+        return acc + currentValue.result;
+      }, 0);
+
+      return resultsArray;
+    });
+};
+
 export const playerResolver = {
   /**
    * Получение всех игроков
@@ -69,36 +101,18 @@ export const playerResolver = {
     return player;
   },
   getPlayerHistory: async ({ handle = '' }) => {
-    const player = await Player.findOne({ handle })
-      .populate({
-        path: 'results.game',
-        model: 'Game',
-        select: ['name', 'date'],
-        populate: {
-          path: 'players',
-          model: 'Player',
-        },
-      })
-      .exec()
-      .then((player) => {
-        const sortResults = player.results.sort((a, b) => (a.game.date > b.game.date ? 1 : -1));
-        player.results = sortResults;
+    return playerHistory(handle);
+  },
 
-        let resultsArray = [];
+  getPlayersHistory: async ({ handles = [] }) => {
+    const arr = [];
+    await handles.reduce(async (acc, item) => {
+      const results = await playerHistory(item);
+      arr.push(...results);
+      return acc;
+    }, []);
 
-        sortResults.reduce((acc, currentValue, index) => {
-          resultsArray.push({
-            value: acc + currentValue.result,
-            date: new Date(sortResults[index].game.date).toDateString(),
-            name: player.name,
-          });
-
-          return acc + currentValue.result;
-        }, 0);
-
-        return resultsArray;
-      });
-    return player;
+    return arr;
   },
 
   /**

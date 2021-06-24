@@ -86,6 +86,10 @@ const graphQlSchema = buildSchema(`
         date: String
         name: String
     }
+    
+    type PlayersHistory {
+        name: [PlayerHistory]
+    }
 
     type History {
         date: String
@@ -106,6 +110,7 @@ const graphQlSchema = buildSchema(`
         getPlayer(_id: ID!): Player!
         getPlayerByHandle(handle: String): Player
         getPlayerHistory(handle: String!): [PlayerHistory]
+        getPlayersHistory(handles: [String]): [PlayerHistory]
         getHistory: [History]
 
         # GAMES
