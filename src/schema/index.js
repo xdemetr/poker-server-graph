@@ -103,10 +103,14 @@ const graphQlSchema = buildSchema(`
         has_more: Boolean
         pages: [PageItem]
     }
+    
+    enum PlayersSortEnum {
+        balance, gameCount, maxSeriesOfWin, maxSeriesOfLoose
+    }
 
     type RootQuery {
         # PLAYERS 
-        getAllPlayers(sortBy: String): [Player]
+        getAllPlayers(sortBy: PlayersSortEnum): [Player]
         getPlayer(_id: ID!): Player!
         getPlayerByHandle(handle: String): Player
         getPlayerHistory(handle: String!): [PlayerHistory]
