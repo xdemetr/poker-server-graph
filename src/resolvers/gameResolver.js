@@ -159,8 +159,9 @@ export const gameResolver = {
                 return acc;
               }, 0);
 
-              player.maxSeriesOfWin = seriesOfWinsArray.max();
-              player.maxSeriesOfLoose = seriesOfLooseArray.max();
+              player.maxSeriesOfWin = seriesOfWinsArray.length > 0 ? seriesOfWinsArray.max() : 0;
+              player.maxSeriesOfLoose =
+                seriesOfLooseArray.length > 0 ? seriesOfLooseArray.max() : 0;
 
               player.save().then((pl) => pl);
             })
