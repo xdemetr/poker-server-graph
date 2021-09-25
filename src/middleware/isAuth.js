@@ -24,6 +24,7 @@ const isAuth = (req, res, next) => {
   }
   req.isAuth = true;
   req.userId = decodedToken.userId;
+  req.isAdmin = decodedToken.isAdmin;
   next();
 };
 

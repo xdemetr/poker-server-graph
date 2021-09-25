@@ -1,6 +1,6 @@
 import Player from '../models/playerModel.js';
 import Game from '../models/gameModel.js';
-import { checkIsAuth } from './authResolver.js';
+import { checkIsAdmin, checkIsAuth } from './authResolver.js';
 
 const playerHistory = async (handle) => {
   return await Player.findOne({ handle })
@@ -122,7 +122,7 @@ export const playerResolver = {
    * @returns {Promise<*|Document<any, any>>}
    */
   createPlayer: async ({ playerInput }, req) => {
-    checkIsAuth(req.isAuth);
+    checkIsAdmin(req.isAdmin)
 
     const { id, name, handle, isRegular, isShowInRating } = playerInput;
     const existPlayerHandle = await Player.findOne({ handle });

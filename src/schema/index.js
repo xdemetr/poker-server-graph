@@ -3,8 +3,8 @@ import { buildSchema } from 'graphql';
 // language=GraphQL
 const graphQlSchema = buildSchema(`
     type User {
-        id: ID!
-        email: String!
+        id: ID
+        email: String
         password: String
         isAdmin: Boolean
     }
@@ -42,12 +42,20 @@ const graphQlSchema = buildSchema(`
         userId: ID!
         token: String!
         tokenExpiration: Int!
-        isAdmin: Boolean
+        isAdmin: Boolean!
+        email: String
     }
 
     input UserInput {
         email: String!
         password: String!
+    }
+    
+    input UpdateUserInput {
+        id: String!
+        password: String!
+        newPassword: String!
+        confirmNewPassword: String!
     }
 
     input PlayerInput {
@@ -128,6 +136,7 @@ const graphQlSchema = buildSchema(`
 
     type RootMutation {
         createUser(userInput: UserInput): User
+        updateUser(updateUserInput: UpdateUserInput): User
         createPlayer(playerInput: PlayerInput): Player
 
         createGame(gameInput: GameInput): Game

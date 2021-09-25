@@ -8,6 +8,12 @@ export const checkIsAuth = (isAuth) => {
   }
 };
 
+export const checkIsAdmin = (isAdmin) => {
+  if (!isAdmin) {
+    throw new Error('Access error');
+  }
+};
+
 export const authResolver = {
   /**
    * Регистрация
@@ -21,10 +27,12 @@ export const authResolver = {
         throw new Error('User exists already.');
       }
       const hashedPassword = await bcrypt.hash(args.userInput.password, 12);
+      const usersCount = await User.count({});
 
       const user = new User({
         email: args.userInput.email,
         password: hashedPassword,
+        isAdmin: usersCount >= 1 ? false: true
       });
 
       const result = await user.save();
@@ -50,14 +58,46 @@ export const authResolver = {
     if (!isEqual) {
       throw new Error('Неверный пароль');
     }
-    const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user.id, email: user.email, isAdmin: user.isAdmin }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
+
     return {
       userId: user.id,
       isAdmin: user.isAdmin,
       token: `Bearer ${token}`,
-      tokenExpiration: 3600,
+      tokenExpiration: 1200,
+      email: user.email,
     };
+  },
+
+  updateUser: async (args, req) => {
+
+    checkIsAuth(req.isAuth)
+    try {
+      const existingUser = await User.findById(args.updateUserInput.id);
+
+      const isEqual = await bcrypt.compare(args.updateUserInput.password, existingUser.password);
+      if (!isEqual) {
+        throw new Error('Current password is incorrect');
+      }
+
+      if (args.updateUserInput.newPassword !== args.updateUserInput.confirmNewPassword) {
+        throw new Error('Password mismatch');
+      }
+
+      const id = args.updateUserInput.id;
+      const hashedNewPassword = await bcrypt.hash(args.updateUserInput.newPassword, 12);
+
+      await User.findByIdAndUpdate(id, {
+        password: hashedNewPassword,
+      });
+
+      const result = await User.findById(id);
+      return result;
+
+    } catch (err) {
+      throw err;
+    }
   },
 };

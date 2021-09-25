@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { checkIsAuth } from './authResolver.js';
+import { checkIsAdmin, checkIsAuth } from './authResolver.js';
 import Game from '../models/gameModel.js';
 import Player from '../models/playerModel.js';
 import paginate from 'express-paginate';
@@ -68,7 +68,7 @@ export const gameResolver = {
   },
 
   createGame: async ({ gameInput: { name, date, isBigGame, buyIn, players } }, req) => {
-    checkIsAuth(req.isAuth);
+    checkIsAdmin(req.isAdmin);
 
     const gameName = name ? name.trim() : moment().format('DD-MM-YYYY');
 
@@ -91,7 +91,7 @@ export const gameResolver = {
   },
 
   saveGameResult: async ({ resultInput: { id, players, results, name, date } }, req) => {
-    checkIsAuth(req.isAuth);
+    checkIsAdmin(req.isAdmin);
 
     if (!id) {
       throw new Error('Не указан id игры');
@@ -191,7 +191,7 @@ export const gameResolver = {
   },
 
   deleteGame: async ({ id: gameId }, req) => {
-    checkIsAuth(req.isAuth);
+    checkIsAdmin(req.isAdmin)
 
     return await Game.findByIdAndRemove(gameId).then((game) => {
       if (!game) {
