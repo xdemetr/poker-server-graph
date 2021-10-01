@@ -68,7 +68,7 @@ export const gameResolver = {
   },
 
   createGame: async ({ gameInput: { name, date, isBigGame, buyIn, players } }, req) => {
-    checkIsAdmin(req.isAdmin);
+    checkIsAdmin(req);
 
     const gameName = name ? name.trim() : moment().format('DD-MM-YYYY');
 
@@ -91,7 +91,7 @@ export const gameResolver = {
   },
 
   saveGameResult: async ({ resultInput: { id, players, results, name, date } }, req) => {
-    checkIsAdmin(req.isAdmin);
+    checkIsAdmin(req);
 
     if (!id) {
       throw new Error('Не указан id игры');
@@ -191,7 +191,7 @@ export const gameResolver = {
   },
 
   deleteGame: async ({ id: gameId }, req) => {
-    checkIsAdmin(req.isAdmin)
+    checkIsAdmin(req)
 
     return await Game.findByIdAndRemove(gameId).then((game) => {
       if (!game) {

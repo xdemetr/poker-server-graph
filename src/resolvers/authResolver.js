@@ -8,7 +8,10 @@ export const checkIsAuth = (isAuth) => {
   }
 };
 
-export const checkIsAdmin = (isAdmin) => {
+export const checkIsAdmin = (req) => {
+  const authorizationHeaders = req.headers.authorization;
+  const { isAdmin } = jwt.decode(authorizationHeaders.split(' ')[1]);
+
   if (!isAdmin) {
     throw new Error('Access error');
   }
@@ -72,7 +75,6 @@ export const authResolver = {
   },
 
   updateUser: async (args, req) => {
-
     checkIsAuth(req.isAuth)
     try {
       const existingUser = await User.findById(args.updateUserInput.id);
