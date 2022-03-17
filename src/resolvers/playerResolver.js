@@ -122,7 +122,7 @@ export const playerResolver = {
    * @returns {Promise<*|Document<any, any>>}
    */
   createPlayer: async ({ playerInput }, req) => {
-    checkIsAdmin(req)
+    checkIsAdmin(req);
 
     const { id, name, handle, isRegular, isShowInRating } = playerInput;
     const existPlayerHandle = await Player.findOne({ handle });

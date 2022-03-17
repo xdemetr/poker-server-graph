@@ -45,6 +45,14 @@ const graphQlSchema = buildSchema(`
         isAdmin: Boolean!
         email: String
     }
+    
+    type UserData {
+        id: ID!
+        email: String
+        isAdmin: Boolean!
+        iat: Int
+        exp: Int
+    }
 
     input UserInput {
         email: String!
@@ -132,6 +140,7 @@ const graphQlSchema = buildSchema(`
 
         # AUTH        
         login(email: String!, password: String!): AuthData
+        user: UserData
     }
 
     type RootMutation {

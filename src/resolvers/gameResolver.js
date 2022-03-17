@@ -191,7 +191,7 @@ export const gameResolver = {
   },
 
   deleteGame: async ({ id: gameId }, req) => {
-    checkIsAdmin(req)
+    checkIsAdmin(req);
 
     return await Game.findByIdAndRemove(gameId).then((game) => {
       if (!game) {

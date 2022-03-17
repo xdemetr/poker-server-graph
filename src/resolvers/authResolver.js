@@ -10,11 +10,17 @@ export const checkIsAuth = (isAuth) => {
 
 export const checkIsAdmin = (req) => {
   const authorizationHeaders = req.headers.authorization;
+  if (!authorizationHeaders) {
+    throw new Error('Access error');
+  }
+
   const { isAdmin } = jwt.decode(authorizationHeaders.split(' ')[1]);
 
   if (!isAdmin) {
     throw new Error('Access error');
   }
+
+  return true;
 };
 
 export const authResolver = {
@@ -35,7 +41,7 @@ export const authResolver = {
       const user = new User({
         email: args.userInput.email,
         password: hashedPassword,
-        isAdmin: usersCount >= 1 ? false: true
+        isAdmin: usersCount >= 1 ? false : true,
       });
 
       const result = await user.save();
@@ -61,9 +67,13 @@ export const authResolver = {
     if (!isEqual) {
       throw new Error('Неверный пароль');
     }
-    const token = jwt.sign({ userId: user.id, email: user.email, isAdmin: user.isAdmin }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
+    const token = jwt.sign(
+      { userId: user.id, email: user.email, isAdmin: user.isAdmin },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '1h',
+      },
+    );
 
     return {
       userId: user.id,
@@ -75,7 +85,7 @@ export const authResolver = {
   },
 
   updateUser: async (args, req) => {
-    checkIsAuth(req.isAuth)
+    checkIsAuth(req.isAuth);
     try {
       const existingUser = await User.findById(args.updateUserInput.id);
 
@@ -97,9 +107,34 @@ export const authResolver = {
 
       const result = await User.findById(id);
       return result;
-
     } catch (err) {
       throw err;
     }
   },
+
+  user: async (args, req) => {
+    const authorizationHeaders = req.headers.authorization;
+
+    if (!authorizationHeaders) {
+      throw Error('access denied')
+    }
+
+    const token = authorizationHeaders.split(' ')[1];
+
+    const { email, userId: id, isAdmin, iat, exp } = jwt.decode(token);
+
+    try {
+      return {
+        id,
+        email,
+        isAdmin,
+        token,
+        iat,
+        exp
+      };
+
+    } catch (err) {
+      throw err;
+    }
+  }
 };
