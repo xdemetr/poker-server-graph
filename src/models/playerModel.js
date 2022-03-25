@@ -46,6 +46,10 @@ const playerSchema = new Schema({
     type: Boolean,
     default: true,
   },
+  attendance: {
+    type: Number,
+    default: 0
+  }
 });
 
 const playerModel = mongoose.model('Player', playerSchema);

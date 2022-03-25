@@ -20,6 +20,7 @@ const graphQlSchema = buildSchema(`
         isRegular: Boolean
         isShowInRating: Boolean
         results: [PlayerResult]
+        attendance: Int
     }
 
     type Game {

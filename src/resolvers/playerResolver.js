@@ -92,8 +92,18 @@ export const playerResolver = {
         },
       })
       .exec()
-      .then((player) => {
+      .then(async (player) => {
         const sortResults = player.results.sort((a, b) => (a.game.date < b.game.date ? 1 : -1));
+
+        const firstGame = sortResults[sortResults.length - 1];
+        player.attendance = 0;
+
+        if (firstGame) {
+          // количество игр, дата которых >= первой игры
+          const playedGames = await Game.count({ date: { '$gte': firstGame.game.date } });
+          player.attendance = Math.round(player.gameCount / playedGames * 100);
+        }
+
         player.results = sortResults;
         return player;
       });
