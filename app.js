@@ -20,6 +20,7 @@ app.use(
   '/graphql',
   graphqlHTTP({
     graphiql: true,
+    playground: true,
     schema: graphQlSchema,
     rootValue: rootResolver,
   }),
